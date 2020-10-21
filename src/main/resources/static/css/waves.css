@@ -1,0 +1,23 @@
+.waves {
+    position: relative;
+    cursor: pointer;
+    display: inline-block;
+    overflow: hidden;
+    text-align: center;
+    -webkit-tap-highlight-color: transparent;
+    z-index: 1;
+}
+
+.waves-animation {
+    position: absolute;
+    border-radius: 10px;
+    width: 25px;
+    height: 25px;
+    opacity: 0;
+    background-color: rgba(255,255,255,0.5);
+    transition: all 0.7s ease-out;
+    transition-property: transform, opacity, -webkit-transform;
+    -webkit-transform: scale(0);
+    transform: scale(0);
+    pointer-events: none
+}

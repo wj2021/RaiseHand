@@ -1,0 +1,34 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>UpdateSeat</title>
+    <script src="../static/js/lib/jquery-3.5.1.min.js"></script>
+    <script src="../static/js/lib/toastr.min.js"></script>
+    <script src="../static/js/lib/waves.js"></script>
+    <script src="../static/js/insertSeat.js"></script>
+    <link rel="stylesheet" href="../static/css/common.css">
+    <link rel="stylesheet" href="../static/css/toastr.min.css">
+    <link rel="stylesheet" href="../static/css/waves.css">
+</head>
+
+<body>
+    <h1 style="padding-left: 36px; padding-top: 8px;"><a href="../index">主&nbsp;页</a></h1>
+    <table style="width: 100%; height: 60%;">
+        <tr><td>
+            <table cellpadding=0 cellspacing=16 style="margin: 0 auto;">
+                <tr><td><span>机位：</span><input id="number" class="my_input" type="text" placeholder="请输入机位号（如A16）" maxlength="4" oninput = "value=value.replace(/[^A-Za-z0-9]/g,'')" /></td></tr>
+                <tr><td><span>行号：</span><input id="i" class="my_input" type="text" placeholder="请输入机位所在行号（如0）" maxlength="3" oninput = "value=value.replace(/[^0-9]/g,'')" /></td></tr>
+                <tr><td><span>列号：</span><input id="j" class="my_input" type="text"placeholder="请输入机位所在列号（如16）" maxlength="3" oninput = "value=value.replace(/[^0-9]/g,'')" /></td></tr>
+                <tr>
+                    <td style="text-align: center; padding-left: 8%;">
+                        <button class="my_button" style="margin: 0 16px; background-color: crimson;" onclick="deleteSeat()">删除</button>
+                        <button class="my_button" style="margin: 0 16px;" onclick="insertSeat()">插入</button>
+                    </td>
+                </tr>
+            </table>
+        </td></tr>
+    </table>
+</body>
+
+</html>

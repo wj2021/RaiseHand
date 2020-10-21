@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.nju.raisehand.mapper.RaiseHandMapper">
+
+    <!-- 结果集映射 -->
+    <resultMap id="seatMap" type="edu.nju.raisehand.model.RaiseHand">
+        <result column="id" property="id" />
+        <result column="number" property="number" />
+        <result column="i" property="i" />
+        <result column="j" property="j" />
+        <result column="status" property="status" />
+        <result column="upcount" property="upcount" />
+        <result column="downcount" property="downcount" />
+    </resultMap>
+
+    <insert id="insertSeat" parameterType="edu.nju.raisehand.model.RaiseHand"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into `raisehand`(id, number, i, j) values(#{id}, #{number}, #{i}, #{j})
+    </insert>
+
+    <select id="getAllSeats" resultMap="seatMap">
+        select id, number, i, j, status, upcount, downcount from `raisehand`
+    </select>
+
+    <select id="getMaxJ" resultType="java.lang.Integer">
+        select max(j) from `raisehand`;
+    </select>
+    
+    <update id="updateSeat">
+        update `raisehand`
+        <trim prefix="set" suffixOverrides=",">
+            status = #{status},
+            <if test="status==0">downcount = downcount+1,</if>
+            <if test="status!=0">upcount = upcount+1,</if>
+        </trim>
+        where number = #{number}
+    </update>
+
+    <delete id="deleteAllSeats">
+        delete from `raisehand`
+    </delete>
+
+    <delete id="deleteSeatByNumber">
+        delete from `raisehand` where number = #{number}
+    </delete>
+
+    <!-- <resultMap id="newUserResultMap" extends="resultMap"
+               type="edu.nju.raisehand.model.RaiseHand">
+        <collection property="phoneNum" column="{userId=user_id}"
+                    select="getPhoneNum" />
+    </resultMap>
+
+    <select id="getUserInfo" resultMap="newUserResultMap">
+        select user_id, user_name, password from user
+    </select>
+
+    <select id="getUserByIds" resultType="com.test.model.User">
+        select userId,userName,password
+        from user where userId in
+        <foreach collection="ids" item="userId" separator="," open="(" close=")">
+            #{userId}
+        </foreach>
+    </select> -->
+</mapper>
