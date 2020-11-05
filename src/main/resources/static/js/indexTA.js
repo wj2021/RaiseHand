@@ -1,37 +1,10 @@
-var handupTimer = 0;
-var handdownTimer = 0;
-var waitTime = 120;
 $(function() {
-    toastr.options.timeOut = 3000;
-
-    $("#number").focus();
-    // 响应敲击回车事件
-    $("#number").keyup(function(event) {
-        if(event.keyCode == 13) updateHand(1, $("#number").val(), event);
-    });
-
-    // 测试浏览器cookie是否被禁用
-    setCookie("testCookie", 1, 10000);
-    if(getCookie("testCookie") == null) {
-        toastr.error("请打开cookie！");
-        return ;
-    }
-
-    // 刷新网页后从cookie中读取倒计时数据
-    if(getCookie("handupTimer") != null) handupTimer = getCookie("handupTimer");
-    if(getCookie("handdownTimer") != null) handdownTimer = getCookie("handdownTimer");
-
+    toastr.options.timeOut = 2000;
     // 获取所有座位的举手状态并展示
     getAllSeats();
     var task = setInterval(function() {
         getAllSeats(task);
     }, 3000);
-
-    // 进度条处理
-    processProgress();
-    setInterval(function() {
-        processProgress();
-    }, 1000);
 });
 
 // 插入空白位置，即机位不存在
@@ -83,7 +56,7 @@ function getAllSeats(task) {
             $.each(result.data, function(_i, seat) {
                 if(seat.i != lastI) {
                     if(lastI != -1) {
-                        // 补上一行缺失的部分
+                        // 用空白补上一行缺失的部分
                         while(lastJ < maxJ) {
                             insertBlankSeat(ans, eachWidth);
                             lastJ++;
@@ -98,6 +71,7 @@ function getAllSeats(task) {
                     lastI = seat.i;
                 }
                 while(ii < seat.i) {
+                    // 整行空位补充
                     for(var k=0; k<=maxJ; ++k) {
                         insertBlankSeat(ans, eachWidth);
                     }
@@ -111,9 +85,9 @@ function getAllSeats(task) {
                     jj++;
                 }
                 if(seat.i == ii && seat.j == jj) {
-                    if(seat.status == 0) insertSeat(ans, eachWidth, seat.number, '已放手，单击举手', 'aqua', 'black', 0, 1);
-                    else if(seat.status == 1) insertSeat(ans, eachWidth, seat.number, '已举手，等待助教接单，点击放手', 'red', 'aliceblue', 1, 0);
-                    else if(seat.status == 2) insertSeat(ans, eachWidth, seat.number, '助教已接单，马上赶到，请耐心等待', 'gold', 'black', 2, 0);
+                    if(seat.status == 0) insertSeat(ans, eachWidth, seat.number, '已放手，禁止举手', 'aqua', 'black', 0, 1);
+                    else if(seat.status == 1) insertSeat(ans, eachWidth, seat.number, '学生已举手，单击接单', 'red', 'aliceblue', 1, 2);
+                    else if(seat.status == 2) insertSeat(ans, eachWidth, seat.number, '回答完毕，单击放手', 'gold', 'black', 2, 0);
                     else {
                         toastr.error("机位状态错误，请联系管理员重置机位！");
                         window.clearInterval(task);
@@ -134,46 +108,19 @@ function getAllSeats(task) {
     });
 }
 
-// 校验输入的机位号是否合法
-function validateNumber(number) {
-    if(number == '') return "输入机位号为空！";
-    for(var i=0; i<number.length; ++i) {
-        if(/^\d/.test(number[i])) {
-            var ss = number.substring(0, i);
-            var ee = number.substring(i);
-            if(/^\d+$/.test(ee)) {
-                number = ss + parseInt(ee);
-                break;
-            } else return "输入机位号非法！";
-        }
-    }
-    // 仅仅在前端进行了校验是否存在
-    if($("#"+number).length == 0) return "输入机位号不存在！";
-    return "1";
-}
-
 // 举手或放手操作
 function updateHand(wantStatus, number, event) {
     if(event) showWaves(event);
-    // 前端输入校验
-    number = number.toUpperCase();
-    var msg = validateNumber(number);
-    if(msg != "1") {
-        toastr.error(msg);
+    if(wantStatus == 1) {
+        toastr.error("助教或老师不允许举手！");
         return ;
     }
-    // 获取number机位的当前状态
+    number = number.toUpperCase();
     var currStatus = $("#"+number).attr('value');
-    if(wantStatus == 2) {toastr.error("非法操作！"); return ;}
-    if(currStatus == 2 && wantStatus == 0) {toastr.error("禁止放手，请耐心等待助教赶来！"); return ;}
-    if(currStatus == 2 && wantStatus == 1) {toastr.error("已举手，请耐心等待助教赶来！"); return ;}
-    if(currStatus == 0 && wantStatus == 1 && handupTimer > 0) {toastr.error(Math.round(waitTime/60)+"分钟内只能举一次手！还需等待"+handupTimer+"秒！"); return ;}
-    if(currStatus == 1 && wantStatus == 0 && handdownTimer > 0) {toastr.error(Math.round(waitTime/60)+"分钟内只能放一次手！还需等待"+handdownTimer+"秒"); return ;}
-    if(currStatus == 0 && wantStatus == 0) {toastr.error("已放手！");}
-    if(currStatus == 1 && wantStatus == 1) {toastr.error("已举手！");}
-    if(wantStatus == 0) handdownTimer = waitTime;
-    else handupTimer = waitTime;
-    processProgress();
+    if(currStatus == wantStatus || (currStatus == 0 && wantStatus == 2) || (currStatus == 1 && wantStatus == 0)) {
+        toastr.error("无效操作，请刷新页面后重试！");
+        return;
+    }
     $.ajax({
         url : "/updateHandStatus",
         type: "post",
@@ -183,21 +130,21 @@ function updateHand(wantStatus, number, event) {
             if(result.success == "success") {
                 if(wantStatus == 0) {
                     // 修改页面显示
-                    $("#"+number)[0].title = "已放手，单击举手";
+                    $("#"+number)[0].title = "已放手，禁止举手";
                     $("#"+number)[0].attributes.value.value = 0;
                     $("#"+number)[0].attributes.want.value = 1;
                     $("#"+number)[0].style.backgroundColor = "aqua";
                     $("#"+number)[0].style.color = "black";
                     toastr.success("放手成功！");
                 }
-                if(wantStatus == 1) {
+                if(wantStatus == 2) {
                     // 修改页面显示
-                    $("#"+number)[0].title = "已举手，等待助教接单，点击放手";
-                    $("#"+number)[0].attributes.value.value = 1;
+                    $("#"+number)[0].title = "回答完毕，单击放手";
+                    $("#"+number)[0].attributes.value.value = 2;
                     $("#"+number)[0].attributes.want.value = 0;
-                    $("#"+number)[0].style.backgroundColor = "red";
-                    $("#"+number)[0].style.color = "aliceblue";
-                    toastr.success("举手成功！");
+                    $("#"+number)[0].style.backgroundColor = "gold";
+                    $("#"+number)[0].style.color = "black";
+                    toastr.success("接单成功，请前往"+number+"机位回答学生问题！");
                 }
             }
             if(result.success == "fail") {
@@ -208,40 +155,6 @@ function updateHand(wantStatus, number, event) {
             toastr.error("网络异常！");
         }
     });
-}
-
-function processProgress() {
-    if(handupTimer > 0) {
-        handupTimer -= 1;
-        setCookie("handupTimer", handupTimer, handupTimer*1000);
-    }
-    if(handdownTimer > 0) {
-        handdownTimer -= 1;
-        setCookie("handdownTimer", handdownTimer, handdownTimer*1000);
-    }
-    if(handupTimer > 0) {
-        $("#handup-progress").text(handupTimer);
-        $("#handup-progress")[0].style.color = "white";
-        $("#handup-progress")[0].style.backgroundColor = "red";
-        $("#handup-progress")[0].style.width = (100*handupTimer/waitTime)+"%";
-    }
-    else {
-        $("#handup-progress").text('');
-        $("#handup-progress")[0].style.color = "black";
-        $("#handup-progress")[0].style.backgroundColor = "springgreen";
-        $("#handup-progress")[0].style.width = "100%";
-    }
-    if(handdownTimer > 0) {
-        $("#handdown-progress").text(handdownTimer);
-        $("#handdown-progress")[0].style.color = "black";
-        $("#handdown-progress")[0].style.backgroundColor = "aqua";
-        $("#handdown-progress")[0].style.width = (100*handdownTimer/waitTime)+"%";
-    } else {
-        $("#handdown-progress").text('');
-        $("#handdown-progress")[0].style.color = "black";
-        $("#handdown-progress")[0].style.backgroundColor = "springgreen";
-        $("#handdown-progress")[0].style.width = "100%";
-    }
 }
 
 // 自定义StringBuffer工具类
@@ -258,21 +171,4 @@ class StringBuffer {
     toString() {
         return this._strings_.join("");
     }
-}
-
-
-// 写cookies
-function setCookie(name, value, expTime) { 
-    var exp = new Date(); 
-    exp.setTime(exp.getTime() + expTime);
-    document.cookie = name + "=" + escape(value) + "; expires=" + exp.toGMTString() + ";path=/"; 
-}
-
-// 获取cookies
-function getCookie(name) { 
-    var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
-    if (arr = document.cookie.match(reg))
-        return unescape(arr[2]);
-    else
-        return null;
 }

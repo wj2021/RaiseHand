@@ -16,9 +16,19 @@ public class IndexController {
         return "indexTA";
     }
 
+    @RequestMapping("__admin__")
+    public String admin() {
+        return "admin";
+    }
+
     @RequestMapping(value="/updateSeat")
     public String updateSeat() {
         return "updateSeat";
+    }
+
+    @RequestMapping("handStatistics")
+    public String handStatistics() {
+        return "handStatistics";
     }
 
 }

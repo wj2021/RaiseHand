@@ -11,7 +11,6 @@ $(function() {
 // 校验输入的机位号是否合法
 function validateNumber(number) {
     if(number == '') return "输入机位号为空！";
-    number = number.toUpperCase();
     for(var i=0; i<number.length; ++i) {
         if(/^\d/.test(number[i])) {
             var ss = number.substring(0, i);
@@ -22,13 +21,15 @@ function validateNumber(number) {
             } else return "输入机位号非法！";
         }
     }
-    return "validate_passed";
+    return "1";
 }
 
 // 向数据库中插入一个机位
 function insertSeat() {
-    var msg = validateNumber($("#number").val().trim(), 1);
-    if(msg != "validate_passed") {
+    var number = $("#number").val().trim();
+    number = number.toUpperCase();
+    var msg = validateNumber(number);
+    if(msg != "1") {
         toastr.error(msg);
         return ;
     }
@@ -39,10 +40,10 @@ function insertSeat() {
     $.ajax({
         url : "/insertSeat",
         type: "post",
-        data:{"number": $("#number").val().trim(), "i": $("#i").val().trim(), "j": $("#j").val().trim()},
+        data:{"number": number, "i": $("#i").val().trim(), "j": $("#j").val().trim()},
         dataType:"json",
         success : function(_result, _status, _xhr) {
-            toastr.success("插入机位" + $("#number").val().trim() + "成功！");
+            toastr.success("插入机位" + number + "成功！");
         },
         error : function(result, err, ex) {
             console.info(result);
@@ -55,24 +56,45 @@ function insertSeat() {
 
 // 删除机位
 function deleteSeat() {
-    var msg = validateNumber($("#number").val().trim(), 1);
-    if(msg != "validate_passed") {
+    var number = $("#number").val().trim();
+    number = number.toUpperCase();
+    var msg = validateNumber(number);
+    if(msg != "1") {
         toastr.error(msg);
         return ;
     }
     $.ajax({
         url : "/deleteSeat",
         type: "post",
-        data:{"number": $("#number").val().trim()},
+        data:{"number": number},
         dataType:"json",
         success : function(_result, _status, _xhr) {
-            toastr.success("删除机位" + $("#number").val().trim() + "成功！");
+            toastr.success("删除机位" + number + "成功！");
         },
         error : function(result, err, ex) {
             console.info(result);
             console.info(err);
             console.info(ex);
             toastr.error("删除失败！");
+        }
+    });
+}
+
+// 重置座位
+function initSeat() {
+    $.ajax({
+        url: "/initSeat",
+        type: "post",
+        data: {},
+        dataType: "json",
+        success : function(_result, _status, _xhr) {
+            toastr.success("重置机位成功！");
+        },
+        error : function(result, err, ex) {
+            console.info(result);
+            console.info(err);
+            console.info(ex);
+            toastr.error("重置机位失败！");
         }
     });
 }

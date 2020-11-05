@@ -22,10 +22,18 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface RaiseHandMapper {
-    int insertSeat(RaiseHand hand);
-    int deleteSeatByNumber(@Param("number")String number);
-    int updateSeat(@Param("number")String number, @Param("status")int status);
-    List<RaiseHand> getAllSeats();
-    int deleteAllSeats();
-    int getMaxJ();
+  // 插入一个机位
+  int insertSeat(RaiseHand hand);
+  // 根据number删除机位
+  int deleteSeatByNumber(@Param("number")String number);
+  // 更新机位状态
+  int updateSeat(@Param("number")String number, @Param("status")int status);
+  // 获取所有机位信息
+  List<RaiseHand> getAllSeats();
+  // 删除所有机位
+  int deleteAllSeats();
+  // 获取机位中最大的列号
+  int getMaxJ();
+  // 根据number获取机位信息
+  List<RaiseHand> getSeatByNumber(@Param("number")String number);
 }

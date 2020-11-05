@@ -64,14 +64,16 @@ public class RaiseHandController {
 
     @RequestMapping(value="/updateHandStatus", method = RequestMethod.POST)
     @Transactional
-    public Map<String, String> updateHandStatus(String number, int status) {
+    public Map<String, String> updateHandStatus(String number, int currStatus, int wantStatus) {
         Map<String, String> res = new HashMap<>();
+        res.put("success", "fail");
+        // 校验传入的currStatus于status是否相同，不同说明信息未及时更新，不能进行更新
+        List<RaiseHand> list = raiseHandMapper.getSeatByNumber(number);
+        if(list == null || list.isEmpty() || list.get(0).getStatus() != currStatus) return res;
         try {
-            raiseHandMapper.updateSeat(number, status); 
+            raiseHandMapper.updateSeat(number, wantStatus);
             res.put("success", "success");
-        } catch (Exception e) {
-            res.put("success", "fail");
-        }
+        } catch (Exception e) {}
         return res;
     }
 

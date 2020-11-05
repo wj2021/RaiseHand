@@ -23,6 +23,10 @@
         select id, number, i, j, status, upcount, downcount from `raisehand`
     </select>
 
+    <select id="getSeatByNumber" resultMap="seatMap">
+        select id, number, i, j, status, upcount, downcount from `raisehand` where number=#{number}
+    </select>
+
     <select id="getMaxJ" resultType="java.lang.Integer">
         select max(j) from `raisehand`;
     </select>

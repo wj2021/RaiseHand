@@ -18,7 +18,7 @@ public class RaiseHand implements Serializable, Comparable<RaiseHand> {
     private String number; // 机位号
     private int i; // 机位所在行号
     private int j; // 机位所在列号
-    private int status; // 是否举手
+    private int status; // 是否举手，0：放手，1：举手，2：举手被助教标记
     private int upcount; // 举手次数统计
     private int downcount; // 放手次数统计
 
