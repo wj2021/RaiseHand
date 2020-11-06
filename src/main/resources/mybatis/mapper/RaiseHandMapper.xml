@@ -36,7 +36,7 @@
         <trim prefix="set" suffixOverrides=",">
             status = #{status},
             <if test="status==0">downcount = downcount+1,</if>
-            <if test="status!=0">upcount = upcount+1,</if>
+            <if test="status==1">upcount = upcount+1,</if>
         </trim>
         where number = #{number}
     </update>
