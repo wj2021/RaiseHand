@@ -169,8 +169,8 @@ function updateHand(wantStatus, number, event) {
     if(currStatus == 2 && wantStatus == 1) {toastr.error("已举手，请耐心等待助教赶来！"); return ;}
     if(currStatus == 0 && wantStatus == 1 && handupTimer > 0) {toastr.error(Math.round(waitTime/60)+"分钟内只能举一次手！还需等待"+handupTimer+"秒！"); return ;}
     if(currStatus == 1 && wantStatus == 0 && handdownTimer > 0) {toastr.error(Math.round(waitTime/60)+"分钟内只能放一次手！还需等待"+handdownTimer+"秒"); return ;}
-    if(currStatus == 0 && wantStatus == 0) {toastr.error("已放手！");}
-    if(currStatus == 1 && wantStatus == 1) {toastr.error("已举手！");}
+    if(currStatus == 0 && wantStatus == 0) {toastr.error("已放手！"); return;}
+    if(currStatus == 1 && wantStatus == 1) {toastr.error("已举手！"); return;}
     if(wantStatus == 0) handdownTimer = waitTime;
     else handupTimer = waitTime;
     processProgress();
