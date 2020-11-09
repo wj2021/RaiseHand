@@ -38,3 +38,11 @@ html,body {
     font-family: "Microsoft soft";
     cursor: pointer;
 }
+
+.my_content {
+    display: -webkit-flex;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+}

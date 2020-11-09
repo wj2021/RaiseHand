@@ -1,5 +1,5 @@
 $(function() {
-    toastr.options.timeOut = 2000;
+    toastr.options.timeOut = 3000;
     // 获取所有座位的举手状态并展示
     getAllSeats();
     var task = setInterval(function() {
@@ -8,21 +8,21 @@ $(function() {
 });
 
 // 插入空白位置，即机位不存在
-function insertBlankSeat(ans, width, margin=16) {
-    ans.append("<td><div style='width: "+width+"px; height: "+width+"px; margin: "+margin+"px auto;'></div></td>");
-    ans.append("<td><div style='width: 5px; height: 5px;'></div></td>");
+function insertBlankSeat(ans, seatWidth, interWidth, margin=16) {
+    ans.append("<td><div style='width: "+seatWidth+"px; height: "+seatWidth+"px; margin: "+margin+"px auto;'></div></td>");
+    ans.append("<td><div style='width: "+interWidth+"px; height: "+interWidth+"px;'></div></td>");
 }
 
 // 插入行号或者列号
-function insertIndex(ans, width, index) {
-    ans.append("<td><div style='width: " +width+ "px; height: " +width+ "px; line-height: " +width+ "px; background-color: #FFFFFF; text-align: center; color: black;'>"+index+"</div></td>");
-    ans.append("<td><div style='width: 5px; height: 5px;'></div></td>");
+function insertIndex(ans, seatWidth, interWidth, index) {
+    ans.append("<td><div style='width: " +seatWidth+ "px; height: " +seatWidth+ "px; line-height: " +seatWidth+ "px; background-color: #FFFFFF; text-align: center; color: black;'>"+index+"</div></td>");
+    ans.append("<td><div style='width: "+interWidth+"px; height: "+interWidth+"px;'></div></td>");
 }
 
 // 插入实际存在的机位
-function insertSeat(ans, width, number, title, bg_color, text_color, status, want) {
-    ans.append("<td><div id='"+number+"' class='waves' title='"+title+"' style='width: " +width+ "px; height: " +width+ "px; line-height: " +width+ "px; margin: 16px auto; background-color: " +bg_color+ "; text-align: center; font-weight: 600; color: " +text_color+ "; cursor: pointer;' value='"+status+"' want='"+want+"'; onclick='updateHand($(this).attr(\"want\"), $(this).text(), event)' >"+number+"</div></td>");
-    ans.append("<td><div style='width: 5px; height: 5px;'></div></td>");
+function insertSeat(ans, seatWidth, interWidth, number, title, bg_color, text_color, status, want) {
+    ans.append("<td><div id='"+number+"' class='waves' title='"+title+"' style='width: " +seatWidth+ "px; height: " +seatWidth+ "px; line-height: " +seatWidth+ "px; margin: 16px auto; background-color: " +bg_color+ "; text-align: center; font-weight: 600; color: " +text_color+ "; cursor: pointer;' value='"+status+"' want='"+want+"'; onclick='updateHand($(this).attr(\"want\"), $(this).text(), event)' >"+number+"</div></td>");
+    ans.append("<td><div style='width: "+interWidth+"px; height: "+interWidth+"px;'></div></td>");
 }
 
 function getAllSeats(task) {
@@ -39,15 +39,25 @@ function getAllSeats(task) {
 
             // 根据窗口大小调整每个座位的展示大小
             var width = $("#content").width();
-            var eachWidth = width / maxJ;
-            if(eachWidth < 40) eachWidth = 40;
-            if(eachWidth > 50) eachWidth = 50;
+            var interWidth = Math.round(width/(maxJ+6)/9);
+            var eachWidth = interWidth * 8;
+            if(eachWidth < 40) {
+                interWidth = 5;
+                eachWidth = 40;
+            }
+            if(eachWidth > 56) {
+                interWidth = 7;
+                eachWidth = 56;
+            }
+            // 过道的宽度
+            var aisleWidth = 30;
 
             // 显示列号
-            ans.append("<tr>");
-            insertBlankSeat(ans, eachWidth, 0);
+            ans.append("<tr class='my_content'>");
+            insertBlankSeat(ans, eachWidth, interWidth, 0);
             for(var j=0; j<=maxJ; ++j) {
-                insertIndex(ans, eachWidth, j);
+                if(j==5 || j==7 || j==9 || j==16) insertBlankSeat(ans, aisleWidth, interWidth, 0); // 这里的空白是过道
+                insertIndex(ans, eachWidth, interWidth, j);
             }
             ans.append("</tr>");
 
@@ -58,7 +68,8 @@ function getAllSeats(task) {
                     if(lastI != -1) {
                         // 用空白补上一行缺失的部分
                         while(lastJ < maxJ) {
-                            insertBlankSeat(ans, eachWidth);
+                            if(currJ==5 || currJ==7 || currJ==9 || currJ==16) insertBlankSeat(ans, aisleWidth, interWidth); // 这里的空白是过道
+                            insertBlankSeat(ans, eachWidth, interWidth);
                             lastJ++;
                         }
                         // 上一行结束
@@ -66,28 +77,31 @@ function getAllSeats(task) {
                         ii++; jj = 0;
                     }
                     // 下一行开始
-                    ans.append("<tr>");
-                    insertIndex(ans, eachWidth, seat.i);
+                    ans.append("<tr class='my_content'>");
+                    insertIndex(ans, eachWidth, interWidth, seat.i);
                     lastI = seat.i;
                 }
                 while(ii < seat.i) {
                     // 整行空位补充
                     for(var k=0; k<=maxJ; ++k) {
-                        insertBlankSeat(ans, eachWidth);
+                        if(k==5 || k==7 || k==9 || k==16) insertBlankSeat(ans, aisleWidth, interWidth); // 这里的空白是过道
+                        insertBlankSeat(ans, eachWidth, interWidth);
                     }
                     ans.append("</tr>");
-                    ans.append("<tr>");
+                    ans.append("<tr class='my_content'>");
                     ii++;
                 }
                 // 空位补充
                 while(jj < seat.j) {
-                    insertBlankSeat(ans, eachWidth);
+                    if(jj==5 || jj==7 || jj==9 || jj==16) insertBlankSeat(ans, aisleWidth, interWidth); // 这里的空白是过道
+                    insertBlankSeat(ans, eachWidth, interWidth);
                     jj++;
                 }
                 if(seat.i == ii && seat.j == jj) {
-                    if(seat.status == 0) insertSeat(ans, eachWidth, seat.number, '已放手，禁止举手', 'aqua', 'black', 0, 1);
-                    else if(seat.status == 1) insertSeat(ans, eachWidth, seat.number, '学生已举手，单击接单', 'red', 'aliceblue', 1, 2);
-                    else if(seat.status == 2) insertSeat(ans, eachWidth, seat.number, '回答完毕，单击放手', 'gold', 'black', 2, 0);
+                    if(jj==5 || jj==7 || jj==9 || jj==16) insertBlankSeat(ans, aisleWidth, interWidth); // 这里的空白是过道
+                    if(seat.status == 0) insertSeat(ans, eachWidth, interWidth, seat.number, '已放手，禁止举手', 'aqua', 'black', 0, 1);
+                    else if(seat.status == 1) insertSeat(ans, eachWidth, interWidth, seat.number, '学生已举手，单击接单', 'red', 'aliceblue', 1, 2);
+                    else if(seat.status == 2) insertSeat(ans, eachWidth, interWidth, seat.number, '回答完毕，单击放手', 'gold', 'black', 2, 0);
                     else {
                         toastr.error("机位状态错误，请联系管理员重置机位！");
                         window.clearInterval(task);
