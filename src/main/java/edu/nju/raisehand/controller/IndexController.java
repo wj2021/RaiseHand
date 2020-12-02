@@ -31,5 +31,17 @@ public class IndexController {
         return "handStatistics";
     }
 
+    // 上传图片页面
+    @RequestMapping("/imgUpload")
+    public String imgUpload() {
+        return "imgUpload";
+    }
+
+    // 错误页面
+    @RequestMapping("/error403")
+    public String error403() {
+        return "error403";
+    }
+
 }
 

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ImgUpload</title>
+
+    <script src="../static/js/lib/jquery-3.5.1.min.js"></script>
+    <script src="../static/js/lib/toastr.min.js"></script> <!-- 右上角显示提示信息 -->
+    <script src="../static/js/lib/waves.js"></script> <!-- 按钮点击具有波纹效果 -->
+    <script src="../static/js/lib/clipboard.min.js"></script> <!-- 将内容复制到剪切板 -->
+    <script src="../static/js/imgUpload.js"></script>
+
+    <link rel="stylesheet" href="../static/css/common.css">
+    <link rel="stylesheet" href="../static/css/toastr.min.css">
+    <link rel="stylesheet" href="../static/css/waves.css">
+
+    <style>
+        .box {
+            width: 90%;
+            height: auto;
+            margin: 0 auto;
+            margin-top: 50px;
+        }
+
+        .box ul li {
+            list-style: none;
+            width: 180px;
+            height: 240px;
+            border-radius: 5px;
+            position: relative;
+            float: left;
+            margin-left: 28px;
+            margin-bottom: 28px;
+            overflow: hidden;
+        }
+
+        .box ul li .deatil {
+            width: 180px;
+            height: 240px;
+            background: rgba(0, 0, 0, 0.7);
+            position: absolute;
+            top: -240px;
+            transition: all 0.3s ease;
+            -webkit-transition: all 0.3s ease;
+            -o-transition: all 0.3s ease;
+            -moz-transition: all 0.3s ease;
+            -ms-transition: all 0.3s ease;
+        }
+
+        .box ul li .deatil a {
+            outline-style: none;
+            border: 0px;
+            border-radius: 3px;
+            padding: 0px 8px;
+            font-size: 18px;
+            font-weight: 600;
+            font-family: "Microsoft soft";
+            display: block;
+            background-color: rgb(43, 174, 226);
+            color: aliceblue;
+            text-decoration: none;
+            width: 100px;
+            text-align: center;
+            height: 50px;
+            line-height: 50px;
+            margin: 0 auto;
+        }
+
+        .box ul li:hover .deatil {
+            top: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="margin: 30px auto; display: -webkit-flex; display: flex; justify-content: center; align-items: center;">
+        <input id="pic" class="my_input" style="width:500px; height: 50px; line-height: 50px;" type="file"
+            accept="image/*">
+        <div class="my_button waves" style="margin: 0 12px; height: 50px; line-height: 50px;"
+            onclick="imgUpload(event)">上传图片</div>
+    </div>
+    <div id="content" class="box"></div>
+</body>
+
+</html>
