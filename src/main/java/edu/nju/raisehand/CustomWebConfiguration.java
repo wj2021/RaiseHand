@@ -21,7 +21,7 @@ public class CustomWebConfiguration implements WebMvcConfigurer {
                 "classpath:/resources/",
                 "classpath:/static/",
                 "classpath:/public/",
-                "file:/" + filePath,
+                "file:" + filePath,
                 "classpath:/webapp/");
     }
 }
