@@ -13,7 +13,7 @@ function getAllPicsName() {
         success: function (result, _status, _xhr) {
             if (result.success == "success") {
                 ans.append("<ul>");
-                var host = window.location.protocol + "://" + window.location.host;
+                var host = window.location.protocol + "//" + window.location.host;
                 $.each(result.data, function (_i, imgName) {
                     var link = host + "/" + imgName;
                     ans.append("<li><div class='deatil'>" +
