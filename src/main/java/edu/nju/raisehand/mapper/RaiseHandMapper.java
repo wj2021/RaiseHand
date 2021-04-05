@@ -10,6 +10,7 @@
     `status` int NOT NULL DEFAULT '0',
     `upcount` int NOT NULL DEFAULT '0',
     `downcount` int NOT NULL DEFAULT '0',
+    `changetime` datetime NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `number` (`number`)
    );
@@ -36,4 +37,6 @@ public interface RaiseHandMapper {
   int getMaxJ();
   // 根据number获取机位信息
   List<RaiseHand> getSeatByNumber(@Param("number")String number);
+  // 当助教接单时间大于 seconds 秒时自动放手
+  int autoHandDown(@Param("timediff") int seconds);
 }

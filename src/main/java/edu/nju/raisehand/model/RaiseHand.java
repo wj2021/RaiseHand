@@ -21,6 +21,7 @@ public class RaiseHand implements Serializable, Comparable<RaiseHand> {
     private int status; // 是否举手，0：放手，1：举手，2：举手被助教标记
     private int upcount; // 举手次数统计
     private int downcount; // 放手次数统计
+    private String changetime; // 记录举手状态的变化时间
 
     public void setHand(int id, String number, int i, int j) {
         this.id = id;
@@ -85,6 +86,14 @@ public class RaiseHand implements Serializable, Comparable<RaiseHand> {
         this.downcount = downcount;
     }
 
+    public String getChangetime() {
+        return changetime;
+    }
+
+    public void setChangetime(String changetime) {
+        this.changetime = changetime;
+    }
+
     @Override
     public String toString() {
         return "RaiseHand{" +
@@ -95,6 +104,7 @@ public class RaiseHand implements Serializable, Comparable<RaiseHand> {
                 ", status=" + status +
                 ", upcount=" + upcount +
                 ", downcount=" + downcount +
+                ", changetime=" + changetime +
                 '}';
     }
 

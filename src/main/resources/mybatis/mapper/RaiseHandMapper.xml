@@ -32,11 +32,19 @@
     <update id="updateSeat">
         update `raisehand`
         <trim prefix="set" suffixOverrides=",">
-            status = #{status},
+            status = #{status}, changetime = now(),
             <if test="status==0">downcount = downcount+1,</if>
             <if test="status==1">upcount = upcount+1,</if>
         </trim>
         where number = #{number}
+    </update>
+
+    <update id="autoHandDown">
+        update `raisehand`
+        <trim prefix="set" suffixOverrides=",">
+            status = 0, downcount = downcount+1, changetime = now(),
+        </trim>
+        where status = 2 and TIMESTAMPDIFF(SECOND, changetime, now()) > #{timediff}
     </update>
 
     <delete id="deleteAllSeats">

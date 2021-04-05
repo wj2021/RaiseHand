@@ -1,3 +1,4 @@
+var autoHnadDownTime = 300; // 当助教接单后超过 autoHnadDownTime 秒后自动放手
 $(function() {
     toastr.options.timeOut = 3000;
     // 获取所有座位的举手状态并展示
@@ -5,6 +6,10 @@ $(function() {
     var task = setInterval(function() {
         getAllSeats(task);
     }, 3000);
+
+    var autoHandDownTask = setInterval(function() {
+        autoHandDown(autoHandDownTask);
+    }, 5000);
 });
 
 // 插入空白位置，即机位不存在
@@ -23,6 +28,22 @@ function insertIndex(ans, seatWidth, interWidth, index) {
 function insertSeat(ans, seatWidth, interWidth, number, title, bg_color, text_color, status, want) {
     ans.append("<td><div id='"+number+"' class='waves' title='"+title+"' style='width: " +seatWidth+ "px; height: " +seatWidth+ "px; line-height: " +seatWidth+ "px; margin: 16px auto; background-color: " +bg_color+ "; text-align: center; font-weight: 600; color: " +text_color+ "; cursor: pointer;' value='"+status+"' want='"+want+"'; onclick='updateHand($(this).attr(\"want\"), $(this).text(), event)' >"+number+"</div></td>");
     ans.append("<td><div style='width: "+interWidth+"px; height: "+interWidth+"px;'></div></td>");
+}
+
+// 当助教接单后，由于不允许学生放手，如果助教忘记放手，学生就再也无法举手了，所以这里设置一个自动放手的请求，当助教接单超过 seconds 秒后自动放手
+function autoHandDown(task) {
+    $.ajax({
+        url: "/autoHandDown",
+        type: "post",
+        data: {"seconds": autoHnadDownTime},
+        dataType: "json",
+        success: function(_result, _status, _xhr) {
+        },
+        error: function(_result, _err, _ex) {
+            window.clearInterval(task);
+            toastr.error("发生异常，加载错误，请刷新页面重试！");
+        }
+    });
 }
 
 function getAllSeats(task) {

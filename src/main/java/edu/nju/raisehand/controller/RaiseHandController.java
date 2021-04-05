@@ -77,6 +77,14 @@ public class RaiseHandController {
         return res;
     }
 
+    @RequestMapping(value="/autoHandDown", method = RequestMethod.POST)
+    public Map<String, String> autoHandDown(int seconds) {
+        Map<String, String> res = new HashMap<>();
+        if(seconds <= 0 || seconds > 3600) seconds = 360;
+        raiseHandMapper.autoHandDown(seconds);
+        return res;
+    }
+
     // 按照实验楼乙224的座位初始化座位A1~A105和B1~B104
     @RequestMapping(value="/initSeat", method = RequestMethod.POST)
     @Transactional
