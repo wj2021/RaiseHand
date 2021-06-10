@@ -62,6 +62,17 @@ public class RaiseHandController {
         return result;
     }
 
+    /**
+     * 删除所有座位
+     */
+    @RequestMapping(value="/deleteAllSeats", method = RequestMethod.POST)
+    public Map<String, String> deleteAllSeats() {
+        raiseHandMapper.deleteAllSeats();
+        Map<String, String> result = new HashMap<>();
+        result.put("success", "success");
+        return result;
+    }
+
     @RequestMapping(value="/updateHandStatus", method = RequestMethod.POST)
     @Transactional
     public Map<String, String> updateHandStatus(String number, int currStatus, int wantStatus) {

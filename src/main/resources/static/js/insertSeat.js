@@ -98,3 +98,22 @@ function initSeat() {
         }
     });
 }
+
+// 删除所有座位
+function deleteAllSeats() {
+    $.ajax({
+        url : "/deleteAllSeats",
+        type: "post",
+        data:{},
+        dataType:"json",
+        success : function(_result, _status, _xhr) {
+            toastr.success("删除机位成功！");
+        },
+        error : function(result, err, ex) {
+            console.info(result);
+            console.info(err);
+            console.info(ex);
+            toastr.error("删除失败！");
+        }
+    });
+}

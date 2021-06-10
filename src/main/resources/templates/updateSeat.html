@@ -16,7 +16,12 @@
     <h1 style="padding-left: 36px; padding-top: 8px;"><a href="../index">主&nbsp;页</a></h1>
     <table style="width: 100%; height: 60%;">
         <tr><td>
-            <table cellpadding=0 cellspacing=16 style="margin: 0 auto;">
+            <table cellpadding=0 cellspacing=16 style="margin: 50px auto;">
+                <tr><td><h1><a href="#" onclick="initSeat()">按照实验室乙124布局重置机位</a></h1></td></tr>
+                <tr><td><h1><a href="#" onclick="deleteAllSeats()">删除所有机位</a></h1></td></tr>
+            </table>
+            <table cellpadding=0 cellspacing=16 style="margin: 50px auto;">
+                <tr><td><h2>添加或删除某个座位:</h2></td></tr>
                 <tr><td><span>机位：</span><input id="number" class="my_input" type="text" placeholder="请输入机位号（如A16）" maxlength="4" oninput = "value=value.replace(/[^A-Za-z0-9]/g,'')" /></td></tr>
                 <tr><td><span>行号：</span><input id="i" class="my_input" type="text" placeholder="请输入机位所在行号（如0）" maxlength="3" oninput = "value=value.replace(/[^0-9]/g,'')" /></td></tr>
                 <tr><td><span>列号：</span><input id="j" class="my_input" type="text"placeholder="请输入机位所在列号（如16）" maxlength="3" oninput = "value=value.replace(/[^0-9]/g,'')" /></td></tr>
