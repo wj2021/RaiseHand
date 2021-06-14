@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.nju.raisehand.mapper.BlankMapper;
 import edu.nju.raisehand.mapper.RaiseHandMapper;
 import edu.nju.raisehand.model.RaiseHand;
 
@@ -25,16 +26,30 @@ import edu.nju.raisehand.model.RaiseHand;
 public class RaiseHandController {
     @Autowired
     private RaiseHandMapper raiseHandMapper;
+    @Autowired
+    private BlankMapper blankMapper;
 
     @RequestMapping(value="/getAllSeats", method = RequestMethod.POST)
-    @Transactional
     public Map<String, Object> getAllSeats() {
+        Map<String, Object> ans = new HashMap<>();
+        ans.put("maxJ", -1);
+        ans.put("data", null);
+        ans.put("rowBlanks", "-1");
+        ans.put("colBlanks", "-1");
         List<RaiseHand> hands = raiseHandMapper.getAllSeats();
+        if(hands == null || hands.isEmpty()) return ans;
         Collections.sort(hands);
         int maxJ = raiseHandMapper.getMaxJ();
-        Map<String, Object> ans = new HashMap<>();
+        List<String> rowBlanks = blankMapper.queryBlanks(0);
+        List<String> colBlanks = blankMapper.queryBlanks(1);
         ans.put("maxJ", maxJ);
         ans.put("data", hands);
+        if(rowBlanks != null && !rowBlanks.isEmpty()) {
+            ans.put("rowBlanks", rowBlanks.get(0));
+        }
+        if(colBlanks != null && !colBlanks.isEmpty()) {
+            ans.put("colBlanks", colBlanks.get(0));
+        }
         return ans;
     }
 
@@ -66,8 +81,10 @@ public class RaiseHandController {
      * 删除所有座位
      */
     @RequestMapping(value="/deleteAllSeats", method = RequestMethod.POST)
+    @Transactional
     public Map<String, String> deleteAllSeats() {
         raiseHandMapper.deleteAllSeats();
+        blankMapper.deleteBlanks();
         Map<String, String> result = new HashMap<>();
         result.put("success", "success");
         return result;
@@ -89,10 +106,36 @@ public class RaiseHandController {
     }
 
     @RequestMapping(value="/autoHandDown", method = RequestMethod.POST)
+    @Transactional
     public Map<String, String> autoHandDown(int seconds) {
         Map<String, String> res = new HashMap<>();
         if(seconds <= 0 || seconds > 3600) seconds = 360;
         raiseHandMapper.autoHandDown(seconds);
+        return res;
+    }
+    
+    @RequestMapping(value="/getBlanks", method = RequestMethod.POST)
+    public Map<String, String> getBlanks() {
+        Map<String, String> res = new HashMap<>();
+        res.put("rowBlanks", "");
+        res.put("colBlanks", "");
+        List<String> rowBlanks = blankMapper.queryBlanks(0);
+        List<String> colBlanks = blankMapper.queryBlanks(1);
+        if(rowBlanks != null && !rowBlanks.isEmpty()) {
+            res.put("rowBlanks", rowBlanks.get(0));
+        }
+        if(colBlanks != null && !colBlanks.isEmpty()) {
+            res.put("colBlanks", colBlanks.get(0));
+        }
+        return res;
+    }
+
+    @RequestMapping(value="/updateBlanks", method = RequestMethod.POST)
+    @Transactional
+    public Map<String, String> updateBlanks(String rowBlanks, String colBlanks) {
+        Map<String, String> res = new HashMap<>();
+        blankMapper.deleteBlanks();
+        blankMapper.insertBlanks(rowBlanks, colBlanks);
         return res;
     }
 
@@ -157,6 +200,12 @@ public class RaiseHandController {
             raiseHand.setHand(count++, "B10"+k, k-1, 10);
             raiseHandMapper.insertSeat(raiseHand);
         }
+
+        // 插入走廊过道，即空白
+        blankMapper.deleteBlanks();
+        blankMapper.insertBlanks("-1", "5,7,9,16");
+
+        // 返回结果
         Map<String, String> ans = new HashMap<>();
         ans.put("success", "success");
         return ans;

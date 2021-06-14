@@ -6,6 +6,9 @@ $(function() {
     $("#number, #i, #j").keyup(function(event){
         if(event.keyCode == 13) insertSeat();
     });
+
+    // 查询过道信息
+    getBlanks();
 });
 
 // 校验输入的机位号是否合法
@@ -114,6 +117,44 @@ function deleteAllSeats() {
             console.info(err);
             console.info(ex);
             toastr.error("删除失败！");
+        }
+    });
+}
+
+// 修改过道
+function saveBlank() {
+    var row_nums = $("#row_nums").val().trim();
+    var col_nums = $("#col_nums").val().trim();
+    $.ajax({
+        url : "/updateBlanks",
+        type: "post",
+        data: {"rowBlanks": row_nums, "colBlanks": col_nums},
+        dataType:"json",
+        success : function(_result, _status, _xhr) {
+            toastr.success("修改成功！");
+        },
+        error : function(result, err, ex) {
+            console.info(result);
+            console.info(err);
+            console.info(ex);
+            toastr.error("修改失败！");
+        }
+    });
+}
+
+// 查询过道信息
+function getBlanks() {
+    $.ajax({
+        url : "/getBlanks",
+        type: "post",
+        data: null,
+        dataType:"json",
+        success: function(result, _status, _xhr) {
+            $("#row_nums").val(result.rowBlanks);
+            $("#col_nums").val(result.colBlanks);
+        },
+        error: function(_result, _err, _ex) {
+            toastr.error("获取过道数据失败！");
         }
     });
 }

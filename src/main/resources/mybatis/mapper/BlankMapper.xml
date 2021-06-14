@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.nju.raisehand.mapper.BlankMapper">
+
+    <select id="queryBlanks" parameterType="int" resultType="String">
+        <if test="_parameter==0">
+            select row_nums from `blank` where id=1 limit 1;
+        </if>
+        <if test="_parameter!=0">
+            select col_nums from `blank` where id=1 limit 1;
+        </if>
+    </select>
+
+    <update id="updateBlanks" parameterType="String">
+        update `blank` set row_nums=#{row_nums}, col_nums=#{col_nums} where id=1;
+    </update>
+
+    <insert id="insertBlanks" parameterType="String">
+        insert into `blank`(id, row_nums, col_nums) values(1, #{row_nums}, #{col_nums});
+    </insert>
+
+    <delete id="deleteBlanks">
+        delete from `blank`;
+    </delete>
+
+</mapper>
